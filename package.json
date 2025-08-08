@@ -1,0 +1,30 @@
+{
+  "name": "hedera-hashpack-connector",
+  "version": "1.0.0",
+  "description": "Hedera Hashgraph dApp with HashPack wallet integration",
+  "type": "module",
+  "scripts": {
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "preview": "npx vite preview",
+    "typecheck": "npx tsc --noEmit"
+  },
+  "dependencies": {
+    "@hashgraph/sdk": "^2.69.0",
+    "hashconnect": "^0.2.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.9",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^5.7.2",
+    "vite": "^7.0.6"
+  },
+  "keywords": ["hedera", "hashgraph", "hashpack", "solidity", "dapp"],
+  "author": "",
+  "license": "MIT"
+}

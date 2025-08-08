@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HashConnect Console Test</title>
+    <script src="https://unpkg.com/hashconnect@0.2.9/dist/hashconnect.umd.js"></script>
+</head>
+<body>
+    <h1>HashConnect Console Test</h1>
+    <button id="test-heliswap">Test HeliSwap Pattern</button>
+    <button id="test-our">Test Our Pattern</button>
+    
+    <div id="output"></div>
+    
+    <script>
+        let hashconnect = null;
+        
+        // HeliSwap's exact pattern
+        async function testHeliSwapPattern() {
+            console.log('=== TESTING HELISWAP PATTERN ===');
+            
+            // Step 1: First HashConnect instance (line 40)
+            console.log('Step 1: new HashConnect()');
+            hashconnect = new HashConnect();
+            console.log('HashConnect instance 1:', hashconnect);
+            
+            // Step 2: Second HashConnect instance with true (line 52)
+            console.log('Step 2: new HashConnect(true)');  
+            hashconnect = new HashConnect(true);
+            console.log('HashConnect instance 2:', hashconnect);
+            
+            // Step 3: Setup events
+            console.log('Step 3: Setting up events');
+            setupEvents();
+            
+            // Step 4: HeliSwap's exact metadata
+            const appMetadata = {
+                name: 'HeliSwap DEX',
+                description: 'HeliSwap DEX', 
+                icon: 'https://absolute.url/to/icon.png'
+            };
+            
+            // Step 5: Init with exact parameters
+            console.log('Step 5: Calling init with HeliSwap params');
+            try {
+                const initData = await hashconnect.init(appMetadata, 'testnet', false);
+                console.log('Init successful:', initData);
+                
+                // Step 6: Check for saved pairings
+                if (initData.savedPairings && initData.savedPairings.length > 0) {
+                    console.log('Found saved pairings:', initData.savedPairings);
+                }
+                
+                // Step 7: Connect to extension
+                console.log('Step 7: Calling connectToLocalWallet()');
+                hashconnect.connectToLocalWallet();
+                
+            } catch (error) {
+                console.error('Init failed:', error);
+            }
+        }
+        
+        function setupEvents() {
+            if (hashconnect.foundExtensionEvent) {
+                hashconnect.foundExtensionEvent.on(data => {
+                    console.log('foundExtensionEvent:', data);
+                });
+            }
+            
+            if (hashconnect.pairingEvent) {
+                hashconnect.pairingEvent.on(data => {
+                    console.log('pairingEvent:', data);
+                    console.log('Metadata:', data.metadata);
+                    console.log('AccountIds:', data.accountIds);
+                });
+            }
+            
+            if (hashconnect.transactionEvent) {
+                hashconnect.transactionEvent.on(data => {
+                    console.log('transactionEvent:', data);
+                });
+            }
+        }
+        
+        // Our current pattern
+        async function testOurPattern() {
+            console.log('=== TESTING OUR PATTERN ===');
+            // Add our implementation here to compare
+        }
+        
+        document.getElementById('test-heliswap').onclick = testHeliSwapPattern;
+        document.getElementById('test-our').onclick = testOurPattern;
+        
+        // Automatically log HashConnect version and capabilities
+        console.log('HashConnect version:', HashConnect.version || 'unknown');
+        console.log('HashConnect constructor:', HashConnect);
+    </script>
+</body>
+</html>
