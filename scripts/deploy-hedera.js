@@ -10,7 +10,7 @@ import fs from 'fs'
 import path from 'path'
 import dotenv from 'dotenv'
 import solc from 'solc'
-import { Client, ContractCreateFlow, FileCreateTransaction, Hbar, PrivateKey } from '@hashgraph/sdk'
+import { Client, ContractCreateFlow, Hbar, PrivateKey } from '@hashgraph/sdk'
 
 const envPath = path.resolve(process.cwd(), '.env.local')
 if (fs.existsSync(envPath)) dotenv.config({ path: envPath })
@@ -26,7 +26,40 @@ if (!ACCOUNT_ID || !PRIV_KEY) {
 }
 
 const client = Client.forName(NET)
-client.setOperator(ACCOUNT_ID, PrivateKey.fromString(PRIV_KEY))
+
+function normalizeHex(input) {
+  if (!input) return input
+  return input.startsWith('0x') ? input.slice(2) : input
+}
+
+function parsePrivateKey(raw) {
+  const s = (raw || '').trim()
+  try {
+    // PEM support or SDK-autodetect
+    if (s.includes('BEGIN PRIVATE KEY') || s.includes('BEGIN ECDSA PRIVATE KEY') || s.includes('BEGIN ED25519 PRIVATE KEY')) {
+      return PrivateKey.fromString(s)
+    }
+    const hex = normalizeHex(s)
+    if (/^[0-9a-fA-F]+$/.test(hex)) {
+      // DER-encoded hex generally starts with 0x302e/0x302d
+      const prefix = hex.slice(0, 4).toLowerCase()
+      if (prefix === '302e' || prefix === '302d') {
+        return PrivateKey.fromStringDer(hex)
+      }
+      // Try ECDSA first (common for EVM accounts), then ED25519
+      try { return PrivateKey.fromStringECDSA(hex) } catch {}
+      try { return PrivateKey.fromStringED25519(hex) } catch {}
+    }
+    // Fallback to generic parser
+    return PrivateKey.fromString(s)
+  } catch (e) {
+    console.error('Unable to parse private key. Ensure format matches account key type (ECDSA vs ED25519).')
+    throw e
+  }
+}
+
+const operatorKey = parsePrivateKey(PRIV_KEY)
+client.setOperator(ACCOUNT_ID, operatorKey)
 
 const contractPath = path.resolve(process.cwd(), 'contracts/MessageStorage.sol')
 const source = fs.readFileSync(contractPath, 'utf8')
