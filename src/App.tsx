@@ -309,38 +309,6 @@ function App() {
               <div className="wallet-options">
                 <button 
                   className="wallet-option"
-                  onClick={connectHashPack}
-                  disabled={isConnecting}
-                >
-                  <div className="wallet-info">
-                    <div className="wallet-name">HashPack Legacy (Mainnet)</div>
-                    <div className="wallet-description">Checkbox UI - Connect to mainnet</div>
-                  </div>
-                  {isConnecting && <div className="connecting-spinner">Connecting...</div>}
-                </button>
-                
-                <button 
-                  className="wallet-option"
-                  onClick={connectHashPackNew}
-                  disabled={isConnecting}
-                >
-                  <div className="wallet-info">
-                    <div className="wallet-name">HashPack New (Testnet)</div>
-                    <div className="wallet-description">Radio button UI - Connect to testnet</div>
-                  </div>
-                  {isConnecting && <div className="connecting-spinner">Connecting...</div>}
-                </button>
-                
-                <button className="wallet-option" disabled>
-                  <div className="wallet-info">
-                    <div className="wallet-name">QR Code</div>
-                    <div className="wallet-description">Scan with HashPack mobile app</div>
-                  </div>
-                  <div className="coming-soon">Coming Soon</div>
-                </button>
-                
-                <button 
-                  className="wallet-option"
                   onClick={async () => {
                     try {
                       const eth = (window as any).ethereum
@@ -381,9 +349,41 @@ function App() {
                 >
                   <div className="wallet-info">
                     <div className="wallet-name">MetaMask</div>
-                    <div className="wallet-description">Connect via MetaMask (experimental)</div>
+                    <div className="wallet-description">Connect via MetaMask</div>
                   </div>
                   {!isConnecting && <div className="coming-soon"></div>}
+                </button>
+                
+                <button 
+                  className="wallet-option"
+                  onClick={connectHashPack}
+                  disabled={isConnecting}
+                >
+                  <div className="wallet-info">
+                    <div className="wallet-name">HashPack Legacy (Mainnet)</div>
+                    <div className="wallet-description">Checkbox UI - Connect to mainnet</div>
+                  </div>
+                  {isConnecting && <div className="connecting-spinner">Connecting...</div>}
+                </button>
+                
+                <button 
+                  className="wallet-option"
+                  onClick={connectHashPackNew}
+                  disabled={isConnecting}
+                >
+                  <div className="wallet-info">
+                    <div className="wallet-name">HashPack New (Testnet)</div>
+                    <div className="wallet-description">Radio button UI - Connect to testnet</div>
+                  </div>
+                  {isConnecting && <div className="connecting-spinner">Connecting...</div>}
+                </button>
+                
+                <button className="wallet-option" disabled>
+                  <div className="wallet-info">
+                    <div className="wallet-name">QR Code</div>
+                    <div className="wallet-description">Scan with HashPack mobile app</div>
+                  </div>
+                  <div className="coming-soon">Coming Soon</div>
                 </button>
               </div>
             </div>
