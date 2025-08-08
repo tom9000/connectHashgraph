@@ -10,7 +10,7 @@ import fs from 'fs'
 import path from 'path'
 import dotenv from 'dotenv'
 import solc from 'solc'
-import { Client, ContractCreateFlow, Hbar, PrivateKey } from '@hashgraph/sdk'
+import { Client, ContractCreateFlow, Hbar, PrivateKey, ContractId } from '@hashgraph/sdk'
 
 const envPath = path.resolve(process.cwd(), '.env.local')
 if (fs.existsSync(envPath)) dotenv.config({ path: envPath })
@@ -103,12 +103,14 @@ if (!bytecode || bytecode.length === 0) {
     if (!contractId) throw new Error('No contractId in receipt')
 
     console.log('Deployed contractId:', contractId)
+    const evmAddress = '0x' + ContractId.fromString(contractId).toSolidityAddress()
+    console.log('Derived EVM address:', evmAddress)
     console.log('Set these in .env.local:')
     console.log(`VITE_CONTRACT_ID=${contractId}`)
-
-    // Note: evm address derivation is provided by mirror node; print instruction
-    console.log('Find EVM address on HashScan or mirror node, then set:')
-    console.log('VITE_CONTRACT_EVM_ADDRESS=0x...')
+    console.log(`VITE_CONTRACT_EVM_ADDRESS=${evmAddress}`)
+    
+    try { await client.close?.() } catch {}
+    process.exit(0)
   } catch (err) {
     console.error('Deployment failed:', err)
     process.exit(1)
