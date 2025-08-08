@@ -469,6 +469,13 @@ export class WalletService {
       console.log('WalletService: Calling connectToLocalWallet() HeliSwap style...')
       
       try {
+        // Timing tweak: small delay to allow extension readiness
+        const connectDelayMsRaw = (import.meta as any).env.VITE_HASHCONNECT_CONNECT_DELAY_MS
+        const connectDelayMs = Number(connectDelayMsRaw ?? '500')
+        if (!Number.isNaN(connectDelayMs) && connectDelayMs > 0) {
+          console.log(`⏱️ Delaying connectToLocalWallet() by ${connectDelayMs}ms for extension readiness`)
+          await new Promise(resolve => setTimeout(resolve, connectDelayMs))
+        }
         console.log('WalletService: Using HeliSwap EXACT connectToLocalWallet() pattern...')
         this.hashconnect.connectToLocalWallet()
         console.log('WalletService: connectToLocalWallet() completed - HashPack extension should popup')
