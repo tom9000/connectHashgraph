@@ -45,7 +45,10 @@ export class WalletService {
       console.log('Network type:', networkType)
       console.log('App metadata:', appMetadata)
       
-      const initData = await this.hashconnect.init(appMetadata, networkType, false)
+      const initThirdParamEnv = (import.meta as any).env.VITE_HASHCONNECT_INIT_THIRD
+      const initThirdParam = String(initThirdParamEnv).toLowerCase() === 'true'
+      console.log('Init third parameter (from env):', initThirdParam)
+      const initData = await this.hashconnect.init(appMetadata, networkType, initThirdParam)
       
       console.log('✅ HashConnect 0.2.9 initialized successfully')
       console.log('Init data received:', initData)
@@ -145,8 +148,10 @@ export class WalletService {
       this.setUpHeliSwapEvents()
 
       console.log(`Calling init() with ${network} parameters...`)
-      console.log('🔧 CRITICAL: Using HeliSwap EXACT init pattern with FALSE as third parameter...')
-      const initData = await this.hashconnect.init(appMetadata, network, false)
+      const initThirdParamEnv = (import.meta as any).env.VITE_HASHCONNECT_INIT_THIRD
+      const initThirdParam = String(initThirdParamEnv).toLowerCase() === 'true'
+      console.log('Init third parameter (from env):', initThirdParam)
+      const initData = await this.hashconnect.init(appMetadata, network, initThirdParam)
       
       console.log('Init data received:', initData)
       
@@ -375,7 +380,8 @@ export class WalletService {
     const originOverride = env.VITE_APP_ORIGIN as string | undefined
     const iconOverride = env.VITE_APP_ICON_URL as string | undefined
     const origin = originOverride || window.location.origin
-    const icon = iconOverride || `${origin}/logo192.png`
+    const iconData = env.VITE_APP_ICON_DATA as string | undefined
+    const icon = iconData || iconOverride || `${origin}/logo192.png`
     return {
       name: 'Message Saver',
       description: 'Save messages to the Hedera blockchain',
