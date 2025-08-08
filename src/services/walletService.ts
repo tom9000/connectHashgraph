@@ -376,7 +376,7 @@ export class WalletService {
     console.log('Event listeners setup completed')
   }
 
-  private buildAppMetadata(): { name: string; description: string; icon: string } {
+  private buildAppMetadata(): any {
     // Allow explicit env overrides to avoid any encoding/mismatch surprises
     const env = (import.meta as any).env || {}
     const originOverride = env.VITE_APP_ORIGIN as string | undefined
@@ -384,11 +384,17 @@ export class WalletService {
     const origin = originOverride || window.location.origin
     const iconData = env.VITE_APP_ICON_DATA as string | undefined
     const icon = iconData || iconOverride || `${origin}/logo192.png`
-    return {
+    const requireUrl = String(env.VITE_REQUIRE_METADATA_URL || 'false').toLowerCase() === 'true'
+    const url = env.VITE_APP_URL || origin
+    const metadata: any = {
       name: 'Message Saver',
       description: 'Save messages to the Hedera blockchain',
       icon
     }
+    if (requireUrl) {
+      metadata.url = url
+    }
+    return metadata
   }
 
   async connectWallet(networkOverride?: 'mainnet' | 'testnet'): Promise<void> {
