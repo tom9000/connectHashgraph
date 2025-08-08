@@ -40,8 +40,8 @@ export class WalletService {
 
       console.log('Calling init() with HeliSwap EXACT parameters...')
       
-      // Use environment variable to determine network (mainnet for checkbox UI)
-      const networkType = (import.meta as any).env.VITE_HEDERA_NETWORK || 'mainnet'
+      // Force mainnet for legacy checkbox UI
+      const networkType = 'mainnet'
       console.log('Network type:', networkType)
       console.log('App metadata:', appMetadata)
       
@@ -151,7 +151,7 @@ export class WalletService {
       const initThirdParamEnv = (import.meta as any).env.VITE_HASHCONNECT_INIT_THIRD
       const initThirdParam = String(initThirdParamEnv).toLowerCase() === 'true'
       console.log('Init third parameter (from env):', initThirdParam)
-      const initData = await this.hashconnect.init(appMetadata, network, initThirdParam)
+      const initData = await this.hashconnect.init(appMetadata, 'mainnet', initThirdParam)
       
       console.log('Init data received:', initData)
       
@@ -394,7 +394,7 @@ export class WalletService {
     console.log('Network override requested:', networkOverride)
     
     // If network override is different from current, reinitialize
-    const currentNetwork = (import.meta as any).env.VITE_HEDERA_NETWORK || 'mainnet'
+    const currentNetwork = 'mainnet'
     if (networkOverride && networkOverride !== currentNetwork) {
       console.log(`Switching network from ${currentNetwork} to ${networkOverride}`)
       
