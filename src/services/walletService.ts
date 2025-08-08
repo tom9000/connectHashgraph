@@ -500,9 +500,17 @@ export class WalletService {
             } catch { /* ignore */ }
           })
         }
-        console.log('WalletService: Using HeliSwap EXACT connectToLocalWallet() pattern...')
-        this.hashconnect.connectToLocalWallet()
-        console.log('WalletService: connectToLocalWallet() completed - HashPack extension should popup')
+        const env2 = (import.meta as any).env || {}
+        const useModal = String(env2.VITE_HASHCONNECT_USE_MODAL || 'false').toLowerCase() === 'true'
+        if (useModal && typeof (this.hashconnect as any).openPairingModal === 'function') {
+          console.log('WalletService: Using openPairingModal() per env toggle...')
+          ;(this.hashconnect as any).openPairingModal()
+          console.log('WalletService: openPairingModal() invoked')
+        } else {
+          console.log('WalletService: Using HeliSwap EXACT connectToLocalWallet() pattern...')
+          this.hashconnect.connectToLocalWallet()
+          console.log('WalletService: connectToLocalWallet() completed - HashPack extension should popup')
+        }
         
         // HeliSwap doesn't set isConnecting = false here, the pairing event handler does it
         // The connection state will be updated via the pairing event
