@@ -271,7 +271,7 @@ function App() {
                         <div className="messages-section">
                           <h4 className="messages-title">Recent Messages:</h4>
                           <div className="messages-list">
-                            {recentMessages.slice().reverse().map((msg) => (
+                            {recentMessages.map((msg) => (
                               <div key={msg.id.toString()} className="message-item">
                                 <div className="message-id">#{msg.id.toString()}</div>
                                 <div className="message-text">"{msg.content}"</div>
