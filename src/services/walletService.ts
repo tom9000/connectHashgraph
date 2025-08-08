@@ -6,6 +6,7 @@ export class WalletService {
   private hashconnect: HashConnect | null = null
   private isConnecting: boolean = false
   private softResetAttemptedForTopic: Set<string> = new Set()
+  private extensionAvailable: boolean = false
   private state: HashConnectState = {
     isInitialized: false,
     isConnected: false,
@@ -242,6 +243,7 @@ export class WalletService {
     if (this.hashconnect.foundExtensionEvent && typeof this.hashconnect.foundExtensionEvent.on === 'function') {
       this.hashconnect.foundExtensionEvent.on((data: any) => {
         console.log('HeliSwap foundExtensionEvent:', data)
+        this.extensionAvailable = true
         // HeliSwap pushes to availableExtensions array and sets extensionFound
         // this.availableExtensions.push(data)
         // this.setExtensionFound(true)
@@ -469,12 +471,28 @@ export class WalletService {
       console.log('WalletService: Calling connectToLocalWallet() HeliSwap style...')
       
       try {
-        // Timing tweak: small delay to allow extension readiness
+        // Timing tweak: small delay + wait for extension discovery
         const connectDelayMsRaw = (import.meta as any).env.VITE_HASHCONNECT_CONNECT_DELAY_MS
         const connectDelayMs = Number(connectDelayMsRaw ?? '500')
         if (!Number.isNaN(connectDelayMs) && connectDelayMs > 0) {
           console.log(`⏱️ Delaying connectToLocalWallet() by ${connectDelayMs}ms for extension readiness`)
           await new Promise(resolve => setTimeout(resolve, connectDelayMs))
+        }
+        if (!this.extensionAvailable && this.hashconnect?.foundExtensionEvent) {
+          console.log('⏳ Waiting up to 1000ms for foundExtensionEvent before connecting...')
+          await new Promise<void>((resolve) => {
+            let resolved = false
+            const timeout = setTimeout(() => { if (!resolved) { resolved = true; resolve() } }, 1000)
+            try {
+              this.hashconnect!.foundExtensionEvent.once?.(() => {
+                if (!resolved) {
+                  resolved = true
+                  clearTimeout(timeout)
+                  resolve()
+                }
+              })
+            } catch { /* ignore */ }
+          })
         }
         console.log('WalletService: Using HeliSwap EXACT connectToLocalWallet() pattern...')
         this.hashconnect.connectToLocalWallet()
