@@ -316,6 +316,31 @@ export class WalletService {
       })
     }
 
+    // Fallback: when connection state changes to Paired but pairing event didn't arrive
+    if (this.hashconnect.connectionStatusChangeEvent && typeof this.hashconnect.connectionStatusChangeEvent.on === 'function') {
+      this.hashconnect.connectionStatusChangeEvent.on(async (state: any) => {
+        try {
+          if ((state === 'Paired' || state?.toString?.() === 'Paired') && this.state.accountIds.length === 0) {
+            console.log('🔁 connectionStatusChangeEvent=Paired, attempting topic-based recovery...')
+            const topic = (this.hashconnect as any)?.hcData?.topic || JSON.parse(localStorage.getItem('hashconnectData') || '{}')?.topic
+            if (topic && typeof (this.hashconnect as any).getPairingByTopic === 'function') {
+              const pairing = (this.hashconnect as any).getPairingByTopic(topic)
+              if (pairing?.accountIds?.length) {
+                this.state.accountIds = pairing.accountIds
+                this.state.selectedAccountId = pairing.accountIds[0]
+                this.state.isConnected = true
+                this.state.pairedWalletData = pairing.metadata || pairing
+                this.syncConnectionState()
+                this.isConnecting = false
+              }
+            }
+          }
+        } catch (e) {
+          console.log('connectionStatusChangeEvent recovery error:', e)
+        }
+      })
+    }
+
     console.log('All event listeners setup completed')
     
     // Log all available events for debugging
@@ -344,7 +369,7 @@ export class WalletService {
     console.log('Event listeners setup completed')
   }
 
-  private buildAppMetadata(): { name: string; description: string; icon: string; url: string } {
+  private buildAppMetadata(): { name: string; description: string; icon: string } {
     // Allow explicit env overrides to avoid any encoding/mismatch surprises
     const env = (import.meta as any).env || {}
     const originOverride = env.VITE_APP_ORIGIN as string | undefined
@@ -354,8 +379,7 @@ export class WalletService {
     return {
       name: 'Message Saver',
       description: 'Save messages to the Hedera blockchain',
-      icon,
-      url: origin
+      icon
     }
   }
 
@@ -708,6 +732,12 @@ export class WalletService {
       }
       
       console.log('❌ No automatic pairing solution found yet - connection incomplete')
+      // Offer manual fallback so user can proceed
+      try {
+        this.promptForManualEntry()
+      } catch (e) {
+        console.log('Manual entry prompt failed or was cancelled:', e)
+      }
       this.isConnecting = false
     }
   }
