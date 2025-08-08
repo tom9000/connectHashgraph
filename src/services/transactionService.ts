@@ -94,16 +94,17 @@ export class TransactionService {
         const contract = new ethers.Contract(CONTRACT_CONFIG.evmAddress as string, MESSAGE_STORAGE_ABI, provider)
         if (functionName === 'getMessageCount') {
           const count = await (contract as any).getMessageCount()
-          return { getUint256: (i: number) => ({ toNumber: () => Number(count) }) }
+          return { getUint256: (_i: number) => ({ toNumber: () => Number(count) }) }
         }
         if (functionName === 'getRecentMessages') {
           const countParam = parameters?.[0]
           const count = (countParam && countParam._value ? Number(countParam._value) : 10)
           const [senders, contents, timestamps, ids] = await (contract as any).getRecentMessages(count)
+          const wrapBig = (arr: any[]) => arr.map((v: any) => ({ toNumber: () => Number(v) }))
           return {
-            getAddressArray: () => senders,
-            getStringArray: () => contents,
-            getUint256Array: (idx: number) => (idx === 2 ? timestamps : ids)
+            getAddressArray: (_i?: number) => senders as string[],
+            getStringArray: (_i?: number) => contents as string[],
+            getUint256Array: (idx: number) => (idx === 2 ? wrapBig(timestamps as any[]) : wrapBig(ids as any[]))
           }
         }
       } catch (error) {
