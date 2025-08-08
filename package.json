@@ -7,12 +7,14 @@
     "dev": "npx vite",
     "build": "npx vite build",
     "preview": "npx vite preview",
+    "deploy:hedera": "node scripts/deploy-hedera.js",
     "typecheck": "npx tsc --noEmit"
   },
   "dependencies": {
     "@hashgraph/sdk": "^2.69.0",
     "hashconnect": "0.2.9",
     "ethers": "^6.13.3",
+    "solc": "^0.8.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "dotenv": "^16.4.7"
