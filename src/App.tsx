@@ -339,12 +339,52 @@ function App() {
                   <div className="coming-soon">Coming Soon</div>
                 </button>
                 
-                <button className="wallet-option" disabled>
+                <button 
+                  className="wallet-option"
+                  onClick={async () => {
+                    try {
+                      const eth = (window as any).ethereum
+                      if (!eth) {
+                        alert('MetaMask not detected')
+                        return
+                      }
+                      // Ensure Hedera Mainnet RPC exists in MetaMask
+                      await eth.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                          chainId: '0x127', // 295
+                          chainName: 'Hedera Mainnet',
+                          nativeCurrency: { name: 'HBAR', symbol: 'HBAR', decimals: 18 },
+                          rpcUrls: ['https://mainnet.hashio.io/api'],
+                          blockExplorerUrls: ['https://hashscan.io/mainnet']
+                        }]
+                      }).catch(() => {})
+
+                      // Switch to Hedera Mainnet
+                      await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x127' }] })
+
+                      // Request accounts
+                      const accounts: string[] = await eth.request({ method: 'eth_requestAccounts' })
+                      const addr = accounts?.[0]
+                      if (!addr) throw new Error('No MetaMask accounts')
+
+                      setIsWalletConnected(true)
+                      setWalletAddress(addr)
+                      setHashpackStatus('MetaMask Connected')
+                      setShowWalletModal(false)
+                      await loadContractData(true)
+                    } catch (e: any) {
+                      console.error('MetaMask connect failed', e)
+                      alert(`MetaMask connect failed: ${e?.message || e}`)
+                    }
+                  }}
+                  disabled={isConnecting}
+                >
                   <div className="wallet-info">
                     <div className="wallet-name">MetaMask</div>
                     <div className="wallet-description">Connect via MetaMask (experimental)</div>
                   </div>
-                  <div className="coming-soon">Coming Soon</div>
+                  {!isConnecting && <div className="coming-soon">Experimental</div>}
                 </button>
               </div>
             </div>
