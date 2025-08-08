@@ -383,7 +383,7 @@ function App() {
                     <div className="wallet-name">MetaMask</div>
                     <div className="wallet-description">Connect via MetaMask (experimental)</div>
                   </div>
-                  {!isConnecting && <div className="coming-soon">Experimental</div>}
+                  {!isConnecting && <div className="coming-soon"></div>}
                 </button>
               </div>
             </div>

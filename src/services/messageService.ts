@@ -1,14 +1,19 @@
 import { ContractFunctionParameters } from '@hashgraph/sdk'
 import { transactionService } from './transactionService.ts'
+import { walletService } from './walletService.ts'
 import type { MessageEntry, TransactionResult } from '../types/contractTypes.ts'
 
 export class MessageService {
   
   async storeMessage(message: string): Promise<TransactionResult> {
     try {
-      const parameters = new ContractFunctionParameters()
-        .addString(message)
-
+      const wallet = walletService.getWalletState()
+      if (wallet.isConnected && wallet.accountId?.startsWith('0x')) {
+        // MetaMask/EVM path: send raw string parameter
+        return await transactionService.executeContract('storeMessage', [message])
+      }
+      // HashPack/HAPI path
+      const parameters = new ContractFunctionParameters().addString(message)
       return await transactionService.executeContract('storeMessage', [parameters])
     } catch (error) {
       console.error('Failed to store message:', error)
