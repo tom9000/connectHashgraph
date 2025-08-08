@@ -368,8 +368,7 @@ function App() {
                       const addr = accounts?.[0]
                       if (!addr) throw new Error('No MetaMask accounts')
 
-                      setIsWalletConnected(true)
-                      setWalletAddress(addr)
+                      walletService.setExternalEvmWallet(addr)
                       setHashpackStatus('MetaMask Connected')
                       setShowWalletModal(false)
                       await loadContractData(true)

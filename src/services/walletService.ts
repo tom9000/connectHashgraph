@@ -1041,6 +1041,15 @@ export class WalletService {
   getHashConnect(): HashConnect | null {
     return this.hashconnect
   }
+
+  // Allow external EVM wallets (e.g., MetaMask) to populate wallet state
+  setExternalEvmWallet(evmAddress: string): void {
+    this.state.isConnected = true
+    this.state.accountIds = [evmAddress]
+    this.state.selectedAccountId = evmAddress
+    this.state.pairedWalletData = { name: 'MetaMask', description: 'MetaMask EVM Wallet', icon: '' }
+    this.notifyListeners()
+  }
 }
 
 export const walletService = new WalletService()
