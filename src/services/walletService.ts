@@ -4,6 +4,9 @@ import type { HashConnectState, WalletState } from '../types/contractTypes.ts'
 
 export class WalletService {
   private hashconnect: HashConnect | null = null
+  private pairingString: string = ''
+  private rawPairingString: string = ''
+  private topic: string = ''
   private isConnecting: boolean = false
   private softResetAttemptedForTopic: Set<string> = new Set()
   private extensionAvailable: boolean = false
@@ -17,10 +20,10 @@ export class WalletService {
 
   private listeners: Array<(state: WalletState) => void> = []
 
-  async initialize(): Promise<void> {
+  async initialize(): Promise<{ pairingString: string; rawPairingString: string; topic: string }> {
     if (this.state.isInitialized) {
-      console.log('HashConnect already initialized, skipping...')
-      return
+      console.log('HashConnect already initialized, returning stored pairing data...')
+      return { pairingString: this.pairingString, rawPairingString: this.rawPairingString, topic: this.topic }
     }
     
     try {
@@ -54,6 +57,25 @@ export class WalletService {
       console.log('✅ HashConnect 0.2.9 initialized successfully')
       console.log('Init data received:', initData)
       
+      // Capture pairing string from initData (HeliSwap pattern)
+      this.rawPairingString = initData.pairingString || ''
+      this.topic = initData.topic || ''
+      
+      // Format pairing string for mobile apps (try HashPack-specific URL scheme)
+      if (this.rawPairingString) {
+        // Try HashPack's custom URL scheme - common patterns for mobile wallets:
+        // Option 1: hashpack://pair?data=...
+        // Option 2: hashpack://connect?data=...  
+        // Option 3: hashpack://wc?uri=...
+        // Option 4: Just the raw string (some apps handle base64 directly)
+        this.pairingString = `hashpack://connect?data=${this.rawPairingString}`
+        console.log('📱 Raw pairing string (for extension):', this.rawPairingString)
+        console.log('📱 Formatted pairing string (for QR):', this.pairingString)
+      } else {
+        this.pairingString = ''
+      }
+      console.log('🔗 Topic extracted:', this.topic)
+      
       // HeliSwap's exact logic - check for saved pairings
       if (initData.savedPairings && initData.savedPairings.length > 0) {
         console.log('✅ Found saved pairings:', initData.savedPairings)
@@ -73,6 +95,9 @@ export class WalletService {
       
       this.state.isInitialized = true
       this.syncConnectionState()
+      
+      // Return the pairing string and topic (HeliSwap pattern)
+      return { pairingString: this.pairingString, rawPairingString: this.rawPairingString, topic: this.topic }
       
     } catch (error) {
       console.error('❌ CRITICAL: HashConnect 3.0 initialization failed:', error)
@@ -1040,6 +1065,10 @@ export class WalletService {
 
   getHashConnect(): HashConnect | null {
     return this.hashconnect
+  }
+
+  isInitialized(): boolean {
+    return this.state.isInitialized
   }
 
   // Allow external EVM wallets (e.g., MetaMask) to populate wallet state

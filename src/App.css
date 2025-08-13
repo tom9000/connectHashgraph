@@ -67,6 +67,8 @@
   --gray-12: 238 238 238;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 html,
 body {
   background-color: rgb(var(--slate-1));
@@ -94,10 +96,10 @@ body {
   height: 100vh;
   z-index: 0;
   background: linear-gradient(135deg, 
-    rgba(0, 28, 128, 0.15) 0%, 
-    rgba(26, 199, 255, 0.15) 25%, 
-    rgba(4, 255, 177, 0.15) 50%, 
-    rgba(255, 31, 241, 0.15) 100%
+    rgba(0, 2, 24, 0.8) 0%, 
+    rgba(2, 32, 48, 0.8) 25%, 
+    rgba(0, 40, 28, 0.8) 50%, 
+    rgba(40, 2, 36, 0.8) 100%
   );
   pointer-events: none;
   /* Firefox compatibility fixes */
@@ -168,12 +170,17 @@ body {
 /* Typography */
 .main-heading {
   margin-bottom: 0.25rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .description-text {
   color: #ccc;
   letter-spacing: -0.48px;
   font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 1.4;
 }
 
 /* Wallet Status */
@@ -200,15 +207,20 @@ body {
   color: #ddd;
   font-size: 1rem;
   line-height: 1.5rem;
-  border-radius: 9999px;
-  font-weight: 500;
+  border-radius: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  width: 100%;
+  width: 85%;
+  margin: 0 auto;
   border: none;
   cursor: pointer;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 
+              0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .connect-button:hover {
@@ -495,14 +507,14 @@ body {
 }
 
 .modal-content {
-  background: rgb(var(--gray-1));
+  background: #333;
   border-radius: 16px;
   padding: 0;
   max-width: 400px;
   width: 90%;
   max-height: 80vh;
   overflow: auto;
-  border: 1px solid rgb(var(--gray-4));
+  border: 1px solid #555;
 }
 
 :root:is(html.dark) .modal-content {
@@ -515,7 +527,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid rgb(var(--gray-4));
+  border-bottom: 1px solid #555;
 }
 
 :root:is(html.dark) .modal-header {
@@ -525,8 +537,10 @@ body {
 .modal-header h3 {
   margin: 0;
   font-size: 18px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 600;
-  color: rgb(var(--gray-12));
+  letter-spacing: -0.02em;
+  color: #ddd;
 }
 
 :root:is(html.dark) .modal-header h3 {
@@ -549,8 +563,8 @@ body {
 }
 
 .modal-close:hover {
-  background: rgb(var(--gray-3));
-  color: rgb(var(--gray-12));
+  background: #555;
+  color: #ddd;
 }
 
 :root:is(html.dark) .modal-close {
@@ -577,9 +591,9 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border: 1px solid rgb(var(--gray-4));
+  border: 1px solid #555;
   border-radius: 12px;
-  background: rgb(var(--gray-1));
+  background: #444;
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: left;
@@ -587,8 +601,8 @@ body {
 }
 
 .wallet-option:hover:not(:disabled) {
-  border-color: rgb(var(--gray-6));
-  background: rgb(var(--gray-2));
+  border-color: #666;
+  background: #555;
 }
 
 .wallet-option:disabled {
@@ -614,8 +628,10 @@ body {
 
 .wallet-name {
   font-size: 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 600;
-  color: rgb(var(--gray-12));
+  letter-spacing: -0.01em;
+  color: #ddd;
 }
 
 :root:is(html.dark) .wallet-name {
@@ -624,7 +640,7 @@ body {
 
 .wallet-description {
   font-size: 14px;
-  color: rgb(var(--gray-11));
+  color: #ccc;
 }
 
 :root:is(html.dark) .wallet-description {
@@ -652,4 +668,259 @@ body {
 :root:is(html.dark) .coming-soon {
   color: rgb(var(--orange-11));
   background: rgb(var(--orange-3));
+}
+
+/* Custom Alert Styles */
+.custom-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.custom-alert {
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 350px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.custom-alert-message {
+  font-size: 16px;
+  color: #ddd;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.custom-alert-button {
+  background: #555;
+  color: #ddd;
+  border: 1px solid #666;
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-alert-button:hover {
+  background: #666;
+}
+
+/* WalletConnect Modal Styles */
+.walletconnect-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.walletconnect-content p {
+  margin: 0;
+  text-align: center;
+  color: rgb(var(--gray-11));
+}
+
+:root:is(html.dark) .walletconnect-content p {
+  color: rgb(var(--slate-11));
+}
+
+.divider {
+  text-align: center;
+  color: rgb(var(--gray-11));
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+}
+
+:root:is(html.dark) .divider {
+  color: rgb(var(--slate-11));
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  height: 1px;
+  background: rgb(var(--gray-4));
+  width: 40%;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+:root:is(html.dark) .divider::before,
+:root:is(html.dark) .divider::after {
+  background: rgb(var(--slate-6));
+}
+
+.qr-section {
+  text-align: center;
+}
+
+.qr-placeholder {
+  background: rgb(var(--gray-2));
+  border: 2px dashed rgb(var(--gray-4));
+  border-radius: 12px;
+  padding: 40px 20px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: rgb(var(--gray-11));
+}
+
+:root:is(html.dark) .qr-placeholder {
+  background: rgb(var(--slate-2));
+  border-color: rgb(var(--slate-6));
+  color: rgb(var(--slate-11));
+}
+
+/* QR Code Container */
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.qr-code {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pairing-string-section {
+  width: 100%;
+  text-align: center;
+}
+
+.pairing-string-section p {
+  margin-bottom: 12px;
+  color: rgb(var(--gray-11));
+  font-size: 14px;
+}
+
+:root:is(html.dark) .pairing-string-section p {
+  color: rgb(var(--slate-11));
+}
+
+.pairing-string-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pairing-string-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid rgb(var(--gray-4));
+  border-radius: 8px;
+  background: rgb(var(--gray-1));
+  color: rgb(var(--gray-12));
+  font-size: 12px;
+  font-family: monospace;
+}
+
+:root:is(html.dark) .pairing-string-input {
+  background: rgb(var(--slate-2));
+  border-color: rgb(var(--slate-6));
+  color: rgb(var(--slate-12));
+}
+
+.copy-button {
+  padding: 8px 16px;
+  background: rgb(var(--blue-9));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+  background: rgb(var(--blue-10));
+}
+
+:root:is(html.dark) .copy-button {
+  background: rgb(var(--blue-9));
+}
+
+:root:is(html.dark) .copy-button:hover {
+  background: rgb(var(--blue-10));
+}
+
+/* URL Scheme Selector */
+.url-scheme-selector {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.url-scheme-selector p {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: rgb(var(--gray-11));
+}
+
+:root:is(html.dark) .url-scheme-selector p {
+  color: rgb(var(--slate-11));
+}
+
+.scheme-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.scheme-button {
+  padding: 6px 12px;
+  background: rgb(var(--gray-2));
+  border: 1px solid rgb(var(--gray-4));
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  color: rgb(var(--gray-12));
+  transition: all 0.2s;
+}
+
+.scheme-button:hover {
+  background: rgb(var(--gray-3));
+  border-color: rgb(var(--gray-5));
+}
+
+:root:is(html.dark) .scheme-button {
+  background: rgb(var(--slate-3));
+  border-color: rgb(var(--slate-6));
+  color: rgb(var(--slate-12));
+}
+
+:root:is(html.dark) .scheme-button:hover {
+  background: rgb(var(--slate-4));
+  border-color: rgb(var(--slate-7));
 }
