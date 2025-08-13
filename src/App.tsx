@@ -24,7 +24,7 @@ function App() {
   const [alertMessage, setAlertMessage] = useState('')
 
   useEffect(() => {
-    checkHashPackAvailability()
+    checkForExistingWalletConnections()
     
     // Set up wallet state change listener once on component mount
     const unsubscribe = walletService.onStateChange((state) => {
@@ -54,6 +54,58 @@ function App() {
     // Cleanup listener on component unmount
     return () => unsubscribe()
   }, [showWalletConnectModal])
+
+  const checkForExistingWalletConnections = async () => {
+    try {
+      console.log('Checking for existing wallet connections...')
+      
+      // First, check if MetaMask is connected
+      const isMetaMaskConnected = await checkMetaMaskConnection()
+      if (isMetaMaskConnected) {
+        console.log('MetaMask connection restored, skipping HashConnect initialization')
+        return
+      }
+      
+      // Only initialize HashConnect if MetaMask is not connected
+      console.log('No MetaMask connection found, initializing HashConnect...')
+      await checkHashPackAvailability()
+    } catch (error) {
+      console.warn('Error checking existing wallet connections:', error)
+      // Fallback to HashConnect initialization if there's an error
+      await checkHashPackAvailability()
+    }
+  }
+
+  const checkMetaMaskConnection = async (): Promise<boolean> => {
+    try {
+      const eth = (window as any).ethereum
+      if (!eth) return false
+      
+      // Find MetaMask specifically (in case multiple wallets are installed)
+      let metaMask = eth
+      if (eth.providers?.length > 0) {
+        metaMask = eth.providers.find((provider: any) => provider.isMetaMask)
+        if (!metaMask) return false
+      } else if (!eth.isMetaMask) {
+        return false
+      }
+      
+      // Check if we have permission to access accounts (without requesting new permissions)
+      const accounts: string[] = await metaMask.request({ method: 'eth_accounts' })
+      if (accounts?.length > 0) {
+        console.log('Found existing MetaMask connection:', accounts[0])
+        walletService.setExternalEvmWallet(accounts[0])
+        setHashpackStatus('MetaMask Connected')
+        await loadContractData(true)
+        return true
+      }
+      
+      return false
+    } catch (error) {
+      console.log('MetaMask connection check failed:', error)
+      return false
+    }
+  }
 
   const loadContractData = async (forceLoad = false) => {
     if (!forceLoad && !isWalletConnected) return
@@ -202,24 +254,26 @@ function App() {
         
         {/* Main Content Container */}
         <div className="app-layout">
-          <div className="app-content">
+          <div className={`app-content ${isWalletConnected ? 'wallet-connected' : ''}`}>
             
             {/* Main Content */}
             <main className="app-main">
               <div className="main-card">
                 
                 <div className="card-content">
-                  {/* Heading */}
-                  <div className="main-heading">
-                    <div className="description-text">
-                      Save messages to Hedera
+                  {/* Heading - only show when not connected */}
+                  {!isWalletConnected && (
+                    <div className="main-heading">
+                      <div className="description-text">
+                        Save messages to Hedera
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Wallet Status */}
                   <div className="wallet-status">
                     {isWalletConnected && walletAddress 
-                      ? `Connected: ${walletAddress.substring(0, 8)}...${walletAddress.substring(walletAddress.length - 8)}` 
+                      ? `Wallet Connected: ${walletAddress.substring(0, 8)}...${walletAddress.substring(walletAddress.length - 8)}` 
                       : hashpackStatus}
                   </div>
 
