@@ -28,24 +28,24 @@ This project serves as a comprehensive guide for developers building Hedera smar
 ### Development
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Configure environment
 cp .env .env.local
 # Edit .env.local with your WalletConnect Project ID
 
 # Start development server
-npm run dev          # Standard start (port 3012)
+pnpm run dev          # Standard start (port 3012)
 # OR
 ./rp.sh             # Restart with cleanup
 
 # Build project
-npm run build        # Standard build
+pnpm run build        # Standard build
 # OR
 ./rb.sh             # Build with error logging
 
 # Type checking
-npm run typecheck
+pnpm run typecheck
 ```
 
 ### Environment Configuration
