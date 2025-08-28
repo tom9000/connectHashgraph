@@ -4,26 +4,18 @@
   "description": "Hedera Hashgraph dApp with HashPack wallet integration",
   "type": "module",
   "scripts": {
-    "dev": "npx vite",
-    "build": "npx vite build",
-    "preview": "npx vite preview",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "deploy:hedera": "node scripts/deploy-hedera.js",
-    "typecheck": "npx tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hashgraph/sdk": "^2.69.0",
-    "dotenv": "^16.4.7",
-    "ethers": "^6.13.3",
     "hashconnect": "0.2.9",
-    "qrcode.react": "^4.2.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "solc": "^0.8.21"
+    "qrcode.react": "^4.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20.17.9",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.7.0",
     "typescript": "^5.7.2",
     "vite": "^7.0.6"

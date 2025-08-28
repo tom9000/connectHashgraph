@@ -33,7 +33,7 @@ fi
 
 # Start the dev server on port 3012 in background with HMR disabled to avoid handshake races
 echo "🚀 Starting dev server on port 3012 (HMR disabled)..."
-VITE_DISABLE_HMR=true npm run dev -- --port 3012 > "$LOG_FILE" 2>&1 &
+VITE_DISABLE_HMR=true pnpm run dev -- --port 3012 > "$LOG_FILE" 2>&1 &
 SERVER_PID=$!
 
 # Wait a moment and check if server started

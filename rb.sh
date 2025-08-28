@@ -3,13 +3,16 @@
 # Build script with error logging
 # Usage: ./rb.sh
 
+# Get the directory where the script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_FILE="/tmp/hedera-build.log"
 
 echo "🔨 Building project..."
 echo "📝 Logs: $LOG_FILE"
+echo "📂 Working directory: $SCRIPT_DIR"
 
-# Run build and capture output
-npm run build 2>&1 | tee "$LOG_FILE"
+# Change to script directory and run build
+cd "$SCRIPT_DIR" && pnpm run build 2>&1 | tee "$LOG_FILE"
 
 # Check exit status
 if [ ${PIPESTATUS[0]} -eq 0 ]; then
